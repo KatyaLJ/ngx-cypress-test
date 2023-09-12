@@ -189,8 +189,8 @@ describe('Our first suite', () => {
 //
 //You can also use click method to work with checkboxes and radio buttons
 
-//Datepicker
-it("assert property", () => {
+//Datepicker //Cypress Assertions
+it.only("Datepicker", () => {
 
     function selectDayFromCurrent(day) {
         let date = new Date();
@@ -205,11 +205,7 @@ it("assert property", () => {
               cy.get(' [data-name="chevron-right"] ').click();
               selectDayFromCurrent(day);
             } else {
-              cy.get(
-                'nb-calendar-day-picker [class="day-cell ng-star-inserted"]'
-              )
-                .contains(futureDay)
-                .click();
+              cy.get('nb-calendar-day-picker [class="day-cell ng-star-inserted"]').contains(futureDay).click();
             }
           })
           return dateAssert
@@ -218,12 +214,11 @@ it("assert property", () => {
   cy.visit("/");
   cy.contains("Forms").click();
   cy.contains("Datepicker").click();
-  cy.contains("nb-card", "Common Datepicker")
-    .find("input")
-    .then((input) => {
+  cy.contains("nb-card", "Common Datepicker").find("input").then((input) => {
       cy.wrap(input).click();
       let dateAssert = selectDayFromCurrent(3);
-  cy.wrap(input).invoke("prop", "value").should("contain", dateAssert);
+      cy.wrap(input).invoke("prop", "value").should("contain", dateAssert)
+      cy.wrap(input).should("have.value", dateAssert)
     });
 });
 
@@ -341,7 +336,43 @@ it('PopUps (dialog box)', ()=> {
     cy.on('window:confirm', (confirm) => false)
 })
 
-//Cypress Assertios
+//Cypress Assertions
+
+it('cypress assertions', () => {
+
+    cy.visit('/')
+    cy.contains('Forms').click()
+    cy.contains('Form Layouts').click()
+
+    //1 
+    cy.get('[for="exampleInputEmail1"]')
+    .should('contain', 'Email address')
+    .should('have.class', 'label')
+    .and('have.text', 'Email address')
+
+    //2
+    cy.get('[for="exampleInputEmail1"]').then(label => {
+        expect(label.text()).to.equal('Email address')
+        expect(label).to.have.class('label')
+        expect(label).to.have.text('Email address')
+    })
+
+    //3
+    cy.get('[for="exampleInputEmail1"]').invoke('text').then(text =>{
+        expect(text).to.equal('Email address')
+    })
+
+    cy.contains('nb-card','Basic form')
+    .find('nb-checkbox')
+    .click()
+    .find('.custom-checkbox')
+    .invoke('attr', 'class')
+    //.should('contain', 'checked')
+    .then(classValue =>{
+        expect(classValue).to.contain('checked')
+    })
+
+})
 
 
 
