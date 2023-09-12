@@ -261,13 +261,91 @@ it('list and dropdowns', () => {
 it('Web tables', ()=> {
 
     cy.visit('/')
-    cy.contains('Forms').click()
-    cy.contains('Form Layouts').click()
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+    cy.get('tbody').contains('tr', 'Larry').then( tableRow =>{
+        cy.wrap(tableRow).find('.nb-edit').click()
+        cy.wrap(tableRow).find(' [placeholder="Age"] ').clear().type('25')
+        cy.wrap(tableRow).find('.nb-checkmark').click()
+        cy.wrap(tableRow).find('td').eq(6).should('contain', '25')
+
+    })
+
+    //2 
+    cy.get('thead').find('.nb-plus').click()
+    cy.get('thead').find('tr').eq(2).then( tableRow =>{
+        cy.wrap(tableRow).find('[placeholder="First Name"]').type('Katya')
+        cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Jacome')
+        cy.wrap(tableRow).find('.nb-checkmark').click()
+        
+    })
+    cy.get('tbody tr').first().find('td').then( tableColumns =>{
+        cy.wrap(tableColumns).eq(2).should('contain', 'Katya')
+        cy.wrap(tableColumns).eq(3).should('contain', 'Jacome')
+    })
+
+    //3
+
+    const age = [20, 30, 40, 200]
+
+    cy.wrap(age).each(age =>{
+        cy.get('thead [placeholder="Age"] ').clear().type(age)
+        cy.wait(500)
+        cy.get('tbody tr').each(tableRow =>{
+            if(age== 200){
+                cy.wrap(tableRow).should('contain', 'No data found')
+            }else{
+                cy.wrap(tableRow).find('td').eq(6).should('contain', age)
+            }
+        
+    })
+    })
+   
 })
 
+it('Tooltips', ()=> {
+
+    cy.visit('/')
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Tooltip').click()
+
+    cy.contains('nb-card', 'Colored Tooltips')
+    .contains('Default').click()
+    cy.get('nb-tooltip').should('contain', 'This is a tooltip')
 })
 
+it('PopUps (dialog box)', ()=> {
 
+    cy.visit('/')
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+   /*  //1 not recommendable
+    cy.get('tbody tr').first().find('.nb-trash').click()
+    cy.on('window:confirm', (confirm)=>{
+        expect(confirm).to.equal('Are you sure you want to delete?')
+    }) */
+
+    //2 if the window did not show up, the const stub will be empty, so it will just empty object of our window
+    // confirm event, so when we will try to make a get call for this object, se sill not have any message that
+    //it will be called with. This kind of approach is cleaner and will give us the right assertion
+   /*  const stub= cy.stub()
+    cy.on('window:confirm', stub)
+    cy.get('tbody tr').first().find('.nb-trash').click().then(()=>{
+        expect(stub.getCall(0)).to.be.calledWith('Are you sure you want to delete?')
+    }) */
+
+    //3 if we want to cypress not automatillay confirm we want to select cancel on this dialog box
+    cy.get('tbody tr').first().find('.nb-trash').click()
+    cy.on('window:confirm', (confirm) => false)
+})
+
+//Cypress Assertios
+
+
+
+})
 
 /*describe('Our first suite', () => {
 
