@@ -32,7 +32,4 @@ describe('Test with Page Objects', ( ) =>{
         
     })
 
-    
-
-
 })
